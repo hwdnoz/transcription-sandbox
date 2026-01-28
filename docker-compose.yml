@@ -3,7 +3,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: scripture-backend
+    container_name: transcription-backend
     ports:
       - "5002:5000"
     environment:
@@ -17,13 +17,13 @@ services:
       - /app/node_modules
     command: python app.py
     networks:
-      - scripture-network
+      - transcription-network
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: scripture-frontend
+    container_name: transcription-frontend
     ports:
       - "3000:3000"
     environment:
@@ -35,8 +35,8 @@ services:
     depends_on:
       - backend
     networks:
-      - scripture-network
+      - transcription-network
 
 networks:
-  scripture-network:
+  transcription-network:
     driver: bridge

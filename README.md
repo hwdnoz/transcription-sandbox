@@ -1,4 +1,4 @@
-# Scripture Sandbox
+# Transcription Sandbox
 
 ## Application Workflow
 
