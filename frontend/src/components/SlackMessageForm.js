@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/SlackMessageForm.css';
 
-const SlackMessageForm = () => {
+const SlackMessageForm = ({ transcription }) => {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+
+  // Update text when transcription is received
+  useEffect(() => {
+    if (transcription) {
+      setText(transcription);
+    }
+  }, [transcription]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import SlackMessageForm from './components/SlackMessageForm';
+import AudioTranscriber from './components/AudioTranscriber';
 
 function App() {
+  const [transcription, setTranscription] = useState('');
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>Slack Message Submission</h1>
       </header>
       <main>
-        <SlackMessageForm />
+        <AudioTranscriber onTranscription={setTranscription} />
+        <hr style={{ margin: '40px 0' }} />
+        <SlackMessageForm transcription={transcription} />
       </main>
     </div>
   );

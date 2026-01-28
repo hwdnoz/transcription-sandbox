@@ -1,4 +1,4 @@
-.PHONY: up down logs
+.PHONY: up down logs rebuild
 
 up:
 	docker-compose up -d
@@ -8,3 +8,7 @@ down:
 
 logs:
 	docker-compose logs -f
+
+rebuild:
+	docker-compose down
+	docker-compose up --build
