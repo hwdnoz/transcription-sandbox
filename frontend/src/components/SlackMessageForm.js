@@ -58,6 +58,80 @@ const SlackMessageForm = ({ transcription }) => {
     setError(null); // Clear error when user starts typing
   };
 
+  // Function to render Slack preview
+  const renderSlackPreview = () => {
+    if (!text.trim()) return null;
+
+    // Parse the message format: `title` from speaker:\n\n```transcription```
+    const parts = text.split('```');
+
+    return (
+      <div style={{
+        background: '#f8f8f8',
+        border: '1px solid #e1e1e1',
+        borderRadius: '8px',
+        padding: '1rem',
+        marginTop: '1rem',
+        fontFamily: 'Slack-Lato, Lato, appleLogo, sans-serif'
+      }}>
+        <div style={{ fontSize: '12px', color: '#616061', marginBottom: '8px', fontWeight: 600 }}>
+          Preview (as it appears in Slack):
+        </div>
+        <div style={{
+          background: 'white',
+          border: '1px solid #e1e1e1',
+          borderRadius: '8px',
+          padding: '12px 16px'
+        }}>
+          {parts.map((part, index) => {
+            if (index % 2 === 0) {
+              // Regular text - look for inline backticks
+              return part.split('`').map((segment, i) => {
+                if (i % 2 === 0) {
+                  return <span key={`${index}-${i}`}>{segment}</span>;
+                } else {
+                  // Inline code (single backtick)
+                  return (
+                    <code key={`${index}-${i}`} style={{
+                      background: '#f8f8f8',
+                      border: '1px solid #e1e1e1',
+                      borderRadius: '3px',
+                      padding: '2px 4px',
+                      fontFamily: 'Monaco, Menlo, Consolas, "Courier New", monospace',
+                      fontSize: '12px',
+                      color: '#e01e5a'
+                    }}>
+                      {segment}
+                    </code>
+                  );
+                }
+              });
+            } else {
+              // Code block (triple backticks)
+              return (
+                <pre key={index} style={{
+                  background: '#f8f8f8',
+                  border: '1px solid #e1e1e1',
+                  borderRadius: '4px',
+                  padding: '12px',
+                  margin: '8px 0 0 0',
+                  fontFamily: 'Monaco, Menlo, Consolas, "Courier New", monospace',
+                  fontSize: '13px',
+                  color: '#1d1c1d',
+                  whiteSpace: 'pre-wrap',
+                  wordWrap: 'break-word',
+                  lineHeight: '1.5'
+                }}>
+                  {part}
+                </pre>
+              );
+            }
+          })}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="form-container">
       <h2 style={{
@@ -80,6 +154,7 @@ const SlackMessageForm = ({ transcription }) => {
             disabled={loading}
             className="message-input"
           />
+          {renderSlackPreview()}
         </div>
 
         <div className="form-group">
