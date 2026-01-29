@@ -14,9 +14,6 @@ CORS(app)
 # Initialize Whisper model
 transcriber = pipeline("automatic-speech-recognition", model="openai/whisper-base")
 
-SLACK_WEBHOOK = os.getenv('SLACK_WEBHOOK_URL')
-
-
 @app.get('/health')
 def health_check():
     return jsonify({'status': 'healthy'}), 200
@@ -25,11 +22,22 @@ def health_check():
 @app.post('/api/slack-message')
 def send_message():
     text = request.json.get('text')
+    webhook_url = request.json.get('webhook_url')
+
     if not text:
         return jsonify({'success': False, 'error': 'Text required'}), 400
 
-    requests.post(SLACK_WEBHOOK, json={'text': text})
-    return jsonify({'success': True, 'message': 'Message sent to Slack'})
+    if not webhook_url:
+        return jsonify({'success': False, 'error': 'Webhook URL required'}), 400
+
+    try:
+        response = requests.post(webhook_url, json={'text': text})
+        if response.status_code == 200:
+            return jsonify({'success': True, 'message': 'Message sent to Slack'})
+        else:
+            return jsonify({'success': False, 'error': 'Failed to send message to Slack'}), 400
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @app.post('/api/transcribe')
