@@ -3,6 +3,7 @@ import '../styles/SlackMessageForm.css';
 
 const SlackMessageForm = ({ transcription }) => {
   const [text, setText] = useState('');
+  const [webhookUrl, setWebhookUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
@@ -16,17 +17,24 @@ const SlackMessageForm = ({ transcription }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!webhookUrl.trim()) {
+      setError('Please enter a Slack webhook URL');
+      return;
+    }
+
     setLoading(true);
     setMessage(null);
     setError(null);
 
     try {
-      const response = await fetch('/api/slack-message', {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5002';
+      const response = await fetch(`${apiUrl}/api/slack-message`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text, webhook_url: webhookUrl }),
       });
 
       const data = await response.json();
@@ -39,7 +47,7 @@ const SlackMessageForm = ({ transcription }) => {
       }
     } catch (err) {
       console.error('Error:', err);
-      setError('Failed to connect to server. Make sure the backend is running on port 5000.');
+      setError('Failed to connect to server. Make sure the backend is running.');
     } finally {
       setLoading(false);
     }
@@ -66,9 +74,26 @@ const SlackMessageForm = ({ transcription }) => {
           />
         </div>
 
+        <div className="form-group">
+          <label htmlFor="webhookInput">Slack Webhook URL:</label>
+          <input
+            id="webhookInput"
+            type="text"
+            value={webhookUrl}
+            onChange={(e) => setWebhookUrl(e.target.value)}
+            placeholder="https://hooks.slack.com/services/..."
+            disabled={loading}
+            className="message-input"
+            style={{ fontFamily: 'monospace', fontSize: '13px' }}
+          />
+          <small style={{ display: 'block', marginTop: '5px', color: '#666' }}>
+            Don't have a webhook? <a href="https://api.slack.com/messaging/webhooks" target="_blank" rel="noopener noreferrer">Get one here</a>
+          </small>
+        </div>
+
         <button
           type="submit"
-          disabled={loading || !text.trim()}
+          disabled={loading || !text.trim() || !webhookUrl.trim()}
           className="submit-button"
         >
           {loading ? 'Sending...' : 'Send to Slack'}
