@@ -60,6 +60,14 @@ const SlackMessageForm = ({ transcription }) => {
 
   return (
     <div className="form-container">
+      <h2 style={{
+        fontSize: '1.8rem',
+        fontWeight: '700',
+        color: '#2d3748',
+        marginBottom: '1.5rem',
+        borderBottom: '3px solid #FF6B6B',
+        paddingBottom: '0.5rem'
+      }}>Send to Slack</h2>
       <form onSubmit={handleSubmit} className="slack-form">
         <div className="form-group">
           <label htmlFor="messageInput">Message:</label>
@@ -86,8 +94,8 @@ const SlackMessageForm = ({ transcription }) => {
             className="message-input"
             style={{ fontFamily: 'monospace', fontSize: '13px' }}
           />
-          <small style={{ display: 'block', marginTop: '5px', color: '#666' }}>
-            Don't have a webhook? <a href="https://api.slack.com/messaging/webhooks" target="_blank" rel="noopener noreferrer">Get one here</a>
+          <small style={{ display: 'block', marginTop: '8px', color: '#718096', fontSize: '13px' }}>
+            Don't have a webhook? <a href="https://api.slack.com/messaging/webhooks" target="_blank" rel="noopener noreferrer" style={{ color: '#4ECDC4', fontWeight: '600', textDecoration: 'none' }}>Get one here</a>
           </small>
         </div>
 

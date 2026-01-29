@@ -9,11 +9,10 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Slack Message Submission</h1>
+        <h1>Transcription Service</h1>
       </header>
       <main>
         <AudioTranscriber onTranscription={setTranscription} />
-        <hr style={{ margin: '40px 0' }} />
         <SlackMessageForm transcription={transcription} />
       </main>
     </div>
