@@ -5,6 +5,8 @@ function AudioTranscriber({ onTranscription }) {
   const [loading, setLoading] = useState(false);
   const [transcription, setTranscription] = useState('');
   const [error, setError] = useState('');
+  const [title, setTitle] = useState('');
+  const [speaker, setSpeaker] = useState('');
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -41,9 +43,18 @@ function AudioTranscriber({ onTranscription }) {
       const data = await response.json();
 
       if (data.success) {
-        setTranscription(data.transcription);
+        const rawTranscription = data.transcription;
+        setTranscription(rawTranscription);
+
+        // Format with title and speaker if provided
+        let formattedText = rawTranscription;
+        if (title || speaker) {
+          const header = speaker ? `\`${title}\` from ${speaker}:` : `\`${title}\`:`;
+          formattedText = `${header}\n\n\`\`\`${rawTranscription}\`\`\``;
+        }
+
         if (onTranscription) {
-          onTranscription(data.transcription);
+          onTranscription(formattedText);
         }
       } else {
         setError(data.error || 'Transcription failed');
@@ -59,7 +70,52 @@ function AudioTranscriber({ onTranscription }) {
     <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
       <h2>MP3 Audio Transcription</h2>
       <form onSubmit={handleSubmit}>
+        <div style={{ marginBottom: '15px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+            Title:
+          </label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter title"
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '8px',
+              fontSize: '14px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              boxSizing: 'border-box'
+            }}
+          />
+        </div>
+
+        <div style={{ marginBottom: '15px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+            Speaker:
+          </label>
+          <input
+            type="text"
+            value={speaker}
+            onChange={(e) => setSpeaker(e.target.value)}
+            placeholder="Enter speaker name"
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '8px',
+              fontSize: '14px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              boxSizing: 'border-box'
+            }}
+          />
+        </div>
+
         <div style={{ marginBottom: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+            Audio File:
+          </label>
           <input
             type="file"
             accept=".mp3,audio/mpeg"
